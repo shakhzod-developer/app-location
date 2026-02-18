@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:ydb:grpc://localhost:2136/local
+    driver-class-name: tech.ydb.jdbc.YdbDriver
+    username:
+    password:
+  jpa:
+    database-platform: tech.ydb.hibernate.dialect.YdbDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  data:
+    redis:
+      host: ${TILE38_HOST:localhost}
+      port: 9851
+      lettuce:
+        shutdown-timeout: 200ms
+      timeout: 2s
+
+jwt:
+  secret: 70be839294e9f73f2789f28498f395c57207e78619623e1e483984d538e7890b
+  expiration: 86400000
+
+server:
+  port: 8085
+  forward-headers-strategy: framework
+
+springdoc:
+  cache:
+    disabled: true
+  api-docs:
+    path: "/v3/api-docs"

@@ -41,6 +41,11 @@ public class JpaEmployeeRepository implements EmployeeRepository {
     }
 
     @Override
+    public boolean existsByUsername(String username) {
+        return jpa.findByUsername(username).isPresent();
+    }
+
+    @Override
     public Object findsByUsername(String username) {
         return jpa.findByUsername(username);
     }

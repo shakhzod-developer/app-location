@@ -12,5 +12,7 @@ public interface EmployeeRepository {
 
     void removeEmployee(EmployeeId id);
 
+    boolean existsByUsername(String username);
+
     Object findsByUsername(String username);
 }

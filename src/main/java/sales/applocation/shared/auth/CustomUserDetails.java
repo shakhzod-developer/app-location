@@ -34,6 +34,4 @@ public record CustomUserDetails(
     public String getUsername() {
         return this.username;
     }
-
-
 }

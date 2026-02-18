@@ -8,7 +8,7 @@ services:
       - tile38_data:/data
     restart: unless-stopped
 
-  ydb:
+  ydb: 
     image: ydbplatform/local-ydb:latest
     container_name: ydb-historical
     platform: linux/amd64

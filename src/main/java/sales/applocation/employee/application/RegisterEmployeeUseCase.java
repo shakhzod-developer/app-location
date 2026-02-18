@@ -20,7 +20,7 @@ public class RegisterEmployeeUseCase {
 
     public void registerEmployee(EmployeeCreateRequest request) {
 
-        if ((boolean) employeeRepository.findsByUsername(request.username())){
+        if (employeeRepository.existsByUsername(request.username())){
             throw new RuntimeException("Employee already exists");
         }
 

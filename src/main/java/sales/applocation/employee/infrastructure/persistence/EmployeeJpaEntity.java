@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.domain.Persistable;
 
 import java.util.UUID;
 
@@ -14,11 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class EmployeeJpaEntity {
+public class EmployeeJpaEntity implements Persistable<UUID> {
 
     @Id
-    @Column(length = 36)
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(unique = true)
@@ -31,4 +30,40 @@ public class EmployeeJpaEntity {
     private String role;
 
     private boolean online;
+
+    public EmployeeJpaEntity(
+            UUID id,
+            String username,
+            String password,
+            String phone,
+            String role,
+            boolean online
+    ) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.phone = phone;
+        this.role = role;
+        this.online = online;
+    }
+
+    @Transient
+    private boolean isNew = true;
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
+    }
+
+    @PostLoad
+    @PostPersist
+    void markNotNew() {
+        this.isNew = false;
+    }
+
 }

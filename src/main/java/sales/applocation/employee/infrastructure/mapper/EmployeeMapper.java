@@ -3,10 +3,8 @@ package sales.applocation.employee.infrastructure.mapper;
 import sales.applocation.employee.domain.Employee;
 import sales.applocation.employee.domain.EmployeeId;
 import sales.applocation.employee.infrastructure.persistence.EmployeeJpaEntity;
-import sales.applocation.shared.role.Role;
 
 public class EmployeeMapper {
-
 
     public static EmployeeJpaEntity toJpa(Employee employee) {
         return new EmployeeJpaEntity(

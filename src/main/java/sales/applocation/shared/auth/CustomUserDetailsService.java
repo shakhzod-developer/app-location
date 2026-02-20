@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sales.applocation.employee.domain.Employee;
 import sales.applocation.employee.domain.EmployeeRepository;
+import sales.applocation.users.domain.User;
 import sales.applocation.users.domain.UserRepository;
 
 @Service
@@ -18,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var user = userRepository.findsByUsername(username);
+        User user = userRepository.findsByUsername(username);
         if (user != null) {
             return new CustomUserDetails(
                     user.getId().id(),
@@ -28,7 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                     false
             );
         }
-
 
         Employee emp = (Employee) employeeRepository.findsByUsername(username);
         if (emp != null) {
@@ -40,6 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                     true
             );
         }
+
         throw new UsernameNotFoundException("Identity not found: " + username);
     }
 }

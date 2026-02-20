@@ -20,7 +20,6 @@ import java.util.UUID;
 public class OrderJpaEntity {
 
     @Id
-    @Column(length = 36)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 

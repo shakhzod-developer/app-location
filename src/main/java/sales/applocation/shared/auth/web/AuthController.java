@@ -3,7 +3,6 @@ package sales.applocation.shared.auth.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,19 +27,23 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         AuthResponse response = authService.authenticate(request);
+        System.out.println();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register/user")
-    public ResponseEntity<Void> registerUser(@RequestBody UserCreateRequest request) {
+    public ResponseEntity<AuthResponse> registerUser(@RequestBody UserCreateRequest request) {
         userUseCase.registerUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        AuthRequest authRequest = new AuthRequest(request.username(), request.password());
+        AuthResponse response = authService.authenticate(authRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/register/employee")
-    public ResponseEntity<Void> registerEmployee(@RequestBody EmployeeCreateRequest request) {
+    public ResponseEntity<AuthResponse> registerEmployee(@RequestBody EmployeeCreateRequest request) {
         employeeUseCase.registerEmployee(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        AuthRequest authRequest = new AuthRequest(request.username(), request.password());
+        AuthResponse response = authService.authenticate(authRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
 }

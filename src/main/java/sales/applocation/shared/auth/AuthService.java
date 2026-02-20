@@ -40,6 +40,7 @@ public class AuthService {
 
         return new AuthResponse(
                 jwtToken,
+                userDetails.username(),
                 userDetails.role().name(),
                 userDetails.id(),
                 userDetails.isEmployee() ? "EMPLOYEE" : "USER"

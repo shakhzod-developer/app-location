@@ -1,7 +1,6 @@
 package sales.applocation.employee.infrastructure.persistence;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import sales.applocation.employee.domain.Employee;
 import sales.applocation.employee.domain.EmployeeId;
 import sales.applocation.employee.domain.EmployeeRepository;
@@ -9,7 +8,6 @@ import sales.applocation.employee.infrastructure.mapper.EmployeeMapper;
 
 import java.util.List;
 
-@Repository
 @RequiredArgsConstructor
 public class JpaEmployeeRepository implements EmployeeRepository {
 

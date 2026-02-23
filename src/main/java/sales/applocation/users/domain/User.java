@@ -4,7 +4,6 @@ import sales.applocation.shared.role.Role;
 
 import java.util.Objects;
 
-
 public class User {
 
     private final UserId id;

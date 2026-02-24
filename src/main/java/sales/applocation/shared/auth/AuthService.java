@@ -14,8 +14,6 @@ import sales.applocation.shared.auth.dto.AuthResponse;
 import sales.applocation.shared.security.JwtService;
 import sales.applocation.users.domain.UserRepository;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {

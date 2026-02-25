@@ -7,6 +7,7 @@ import sales.applocation.employee.domain.EmployeeRepository;
 import sales.applocation.employee.infrastructure.mapper.EmployeeMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class JpaEmployeeRepository implements EmployeeRepository {
@@ -44,7 +45,7 @@ public class JpaEmployeeRepository implements EmployeeRepository {
     }
 
     @Override
-    public Object findsByUsername(String username) {
+    public Optional<EmployeeJpaEntity> findsByUsername(String username) {
         return jpa.findByUsername(username);
     }
 }

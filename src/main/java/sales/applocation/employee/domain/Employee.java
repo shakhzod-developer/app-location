@@ -16,7 +16,7 @@ public class Employee {
 
     private boolean online;
 
-    public Employee(EmployeeId id, String password, String phone, String username, Role role) {
+    public Employee(EmployeeId id, String username, String phone, String password, Role role) {
         this.id = id;
         this.username = username;
         this.password = password;

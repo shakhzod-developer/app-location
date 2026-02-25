@@ -29,7 +29,7 @@ public class UserUseCases {
         return userRepository.findAll().stream().map(UserResponse::fromDomain).toList();
     }
 
-    public User findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return userRepository.findsByUsername(username);
     }
 

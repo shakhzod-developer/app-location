@@ -18,9 +18,11 @@ spring:
         shutdown-timeout: 200ms
       timeout: 2s
 
-jwt:
-  secret: 70be839294e9f73f2789f28498f395c57207e78619623e1e483984d538e7890b
-  expiration: 86400000
+app:
+  jwt:
+    secret: 70be839294e9f73f2789f28498f395c57207e78619623e1e483984d538e7890b
+    issuer: sales-platform-api
+    access-token-minutes: 1440
 
 server:
   port: 8085

@@ -45,8 +45,8 @@ public class JpaUserRepository implements UserRepository {
     }
 
     @Override
-    public User findsByUsername(String username) {
+    public Optional<User> findsByUsername(String username) {
         UserJpaEntity entity = userJpaRepository.findByUsername(username);
-        return UserMapper.toDomain(entity);
+        return Optional.ofNullable(UserMapper.toDomain(entity));
     }
 }

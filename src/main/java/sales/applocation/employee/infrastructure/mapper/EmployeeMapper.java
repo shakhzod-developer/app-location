@@ -30,7 +30,6 @@ public class EmployeeMapper {
         } else {
             employee.goOffline();
         }
-
         return employee;
     }
 }

@@ -37,6 +37,4 @@ public class EmployeeUseCases {
     public void deleteEmployee(EmployeeId id) {
         employeeRepository.removeEmployee(id);
     }
-
-    //TODO impl to find the employees who are online with location points.
 }

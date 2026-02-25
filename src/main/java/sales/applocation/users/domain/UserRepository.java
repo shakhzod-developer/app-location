@@ -15,5 +15,5 @@ public interface UserRepository {
 
     void deleteUser(UserId id);
 
-    User findsByUsername(String username);
+    Optional<User> findsByUsername(String username);
 }

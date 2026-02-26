@@ -12,6 +12,7 @@ import sales.applocation.orders.domain.OrderId;
 import sales.applocation.orders.domain.OrderRepository;
 import sales.applocation.orders.domain.OrderStatus;
 import sales.applocation.orders.infrastructure.persistence.RouteSimplifier;
+import sales.applocation.tracking.application.TrackingBroadcastService;
 import sales.applocation.tracking.domain.LocationPoint;
 
 import sales.applocation.tracking.domain.TrackingPoint;
@@ -27,15 +28,19 @@ public class AcceptOrderUseCase {
 
     private final TrackingRepository trackingRepository;
 
+    private final TrackingBroadcastService trackingBroadcastService;
+
     private final GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
     public AcceptOrderUseCase(
             TrackingRepository trackingRepository,
             OrderRepository orderRepository,
-            EmployeeRepository employeeRepository) {
+            EmployeeRepository employeeRepository,
+            TrackingBroadcastService trackingBroadcastService) {
         this.trackingRepository = trackingRepository;
         this.orderRepository = orderRepository;
         this.employeeRepository = employeeRepository;
+        this.trackingBroadcastService = trackingBroadcastService;
     }
 
     public List<Order> swipeOnline(EmployeeId empId) {
@@ -74,5 +79,6 @@ public class AcceptOrderUseCase {
 
     public void processTrackingBatch(OrderId oId, EmployeeId eId, List<LocationPoint> batch) {
         trackingRepository.save(new TrackingPoint(oId, eId, batch));
+        trackingBroadcastService.broadcastOnlineEmployees();
     }
 }

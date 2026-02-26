@@ -39,6 +39,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:4.0.3")
     // Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-jose
     implementation("org.springframework.security:spring-security-oauth2-jose:7.0.3")
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
     testImplementation 'org.springframework.security:spring-security-test'

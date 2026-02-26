@@ -5,7 +5,6 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sales.applocation.tracking.application.AdminCurrentOnlineUseCase;
-import sales.applocation.tracking.application.TrackingUseCase;
 import sales.applocation.tracking.domain.TrackingRepository;
 import sales.applocation.tracking.persistence.service.TrackingService;
 import tools.jackson.databind.ObjectMapper;

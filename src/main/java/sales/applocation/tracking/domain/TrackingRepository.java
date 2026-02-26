@@ -13,6 +13,6 @@ public interface TrackingRepository {
 
     List<AdminMapOfEmployeeDto> findAllActiveLocations();
 
-    TrackingPoint findByOrderId(OrderId id); // Used for completion
+    TrackingPoint findByOrderId(OrderId id);
 
 }

@@ -9,6 +9,7 @@ import sales.applocation.orders.domain.OrderRepository;
 import sales.applocation.orders.infrastructure.mapper.OrderMapper;
 import sales.applocation.orders.infrastructure.persistence.OrderJpaRepository;
 import sales.applocation.orders.infrastructure.persistence.OrderRepositoryImpl;
+import sales.applocation.tracking.application.TrackingBroadcastService;
 import sales.applocation.tracking.domain.TrackingRepository;
 
 @Configuration
@@ -28,8 +29,9 @@ public class OrderConfig {
     public AcceptOrderUseCase acceptOrderUseCase(
             TrackingRepository trackingRepository,
             OrderRepository orderRepository,
-            EmployeeRepository employeeRepository) {
-        return new AcceptOrderUseCase(trackingRepository,orderRepository, employeeRepository);
+            EmployeeRepository employeeRepository,
+            TrackingBroadcastService trackingBroadcastService) {
+        return new AcceptOrderUseCase(trackingRepository,orderRepository, employeeRepository,trackingBroadcastService);
     }
 
 

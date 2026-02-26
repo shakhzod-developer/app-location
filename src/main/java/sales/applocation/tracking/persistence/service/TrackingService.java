@@ -87,7 +87,7 @@ public class TrackingService implements TrackingRepository {
 
                 results.add(new AdminMapOfEmployeeDto(
                         orderId,
-                        fields.path("employeeId").asText(), // Return ID, UI can resolve name if needed
+                        fields.path("employeeId").asText(),
                         coords.get(1).asDouble(), // Lat
                         coords.get(0).asDouble()  // Lon
                 ));
@@ -119,7 +119,7 @@ public class TrackingService implements TrackingRepository {
 
             return new TrackingPoint(id, new EmployeeId(UUID.fromString(empId)), points);
         } catch (Exception e) {
-            return null; // Or log error
+            return null;
         }
     }
 }

@@ -20,6 +20,7 @@ public class TrackingPoint {
         this.points = points;
     }
 
+
     public OrderId getOrderId() {
         return orderId;
     }

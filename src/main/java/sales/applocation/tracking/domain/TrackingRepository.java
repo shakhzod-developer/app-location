@@ -11,7 +11,8 @@ public interface TrackingRepository {
 
     void delete(OrderId id);
 
-    TrackingPoint findByOrderId(OrderId oId);
-
     List<AdminMapOfEmployeeDto> findAllActiveLocations();
+
+    TrackingPoint findByOrderId(OrderId id); // Used for completion
+
 }

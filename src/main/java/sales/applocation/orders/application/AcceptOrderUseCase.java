@@ -11,6 +11,7 @@ import sales.applocation.orders.domain.Order;
 import sales.applocation.orders.domain.OrderId;
 import sales.applocation.orders.domain.OrderRepository;
 import sales.applocation.orders.domain.OrderStatus;
+import sales.applocation.orders.infrastructure.persistence.RouteSimplifier;
 import sales.applocation.tracking.domain.LocationPoint;
 
 import sales.applocation.tracking.domain.TrackingPoint;
@@ -49,23 +50,29 @@ public class AcceptOrderUseCase {
         order.accept(eId);
         orderRepository.save(order);
 
-        trackingRepository.save(new TrackingPoint(oId, List.of(location)));
+        trackingRepository.save(new TrackingPoint(oId,eId, List.of(location)));
     }
 
     public void completeDelivery(OrderId oId) {
         TrackingPoint finalPath = trackingRepository.findByOrderId(oId);
-        if (finalPath == null) throw new RuntimeException("No tracking data found");
-
-        Order order = orderRepository.findById(oId);
+        if (finalPath == null || finalPath.getPoints().isEmpty()) {
+            throw new RuntimeException("No tracking data found for order: " + oId);
+        }
 
         Coordinate[] coordinates = finalPath.getPoints().stream()
-                .map(p -> new Coordinate(p.lon(), p.lat())) // JTS uses (x=lon, y=lat)
+                .map(p -> new Coordinate(p.lon(), p.lat()))
                 .toArray(Coordinate[]::new);
+        LineString route = geometryFactory.createLineString(coordinates);
 
-        LineString lineString = geometryFactory.createLineString(coordinates);
+        LineString cleanRoute = (LineString) RouteSimplifier.simplify(route, 0.00005);
 
-        order.markAsDelivered(lineString);
+        Order order = orderRepository.findById(oId);
+        order.markAsDelivered(cleanRoute);
         orderRepository.save(order);
         trackingRepository.delete(oId);
+    }
+
+    public void processTrackingBatch(OrderId oId, EmployeeId eId, List<LocationPoint> batch) {
+        trackingRepository.save(new TrackingPoint(oId, eId, batch));
     }
 }

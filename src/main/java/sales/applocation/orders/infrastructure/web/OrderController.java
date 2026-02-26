@@ -15,6 +15,7 @@ import sales.applocation.orders.application.dto.OrderCreateRequest;
 import sales.applocation.orders.application.dto.OrderResponse;
 import sales.applocation.orders.application.dto.SwipeOnlineRequest;
 import sales.applocation.orders.domain.OrderId;
+import sales.applocation.tracking.domain.LocationPoint;
 import sales.applocation.users.domain.UserId;
 
 import java.util.List;
@@ -55,6 +56,14 @@ public class OrderController {
             @RequestBody AcceptsOrderRequest request) {
 
         acceptOrderUseCase.acceptOrder(new OrderId(orderId), new EmployeeId(request.employeeId()),request.point());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/addingPoint")
+    public ResponseEntity<Void> addingPoint(@RequestBody OrderId oId,
+                                            EmployeeId eId,
+                                            List<LocationPoint> point) {
+        acceptOrderUseCase.processTrackingBatch(oId, eId, point);
         return ResponseEntity.ok().build();
     }
 

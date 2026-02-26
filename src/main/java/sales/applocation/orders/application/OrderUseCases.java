@@ -38,7 +38,6 @@ public class OrderUseCases {
         LocalDateTime start = date.atStartOfDay();
         LocalDateTime end = date.atTime(LocalTime.MAX);
 
-        // You need to add this method to your OrderRepository/JpaRepository
         return orderRepository.findByEmployeeIdAndDateRange(empId, start, end);
     }
 }

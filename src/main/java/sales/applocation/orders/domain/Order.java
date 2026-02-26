@@ -117,6 +117,10 @@ public class Order {
         return finalRoute;
     }
 
+    public void backUpToOrdered() {
+        this.status = OrderStatus.ORDERED;
+    }
+
 
     public static class OrderBuilder {
         private OrderId orderId;

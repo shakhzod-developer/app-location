@@ -6,7 +6,7 @@ import io.lettuce.core.codec.StringCodec;
 import io.lettuce.core.output.StatusOutput;
 import io.lettuce.core.protocol.CommandArgs;
 import io.lettuce.core.protocol.CommandType;
-import org.springframework.security.core.context.SecurityContextHolder;
+import sales.applocation.employee.domain.EmployeeId;
 import sales.applocation.orders.domain.OrderId;
 import sales.applocation.tracking.application.dto.AdminMapOfEmployeeDto;
 import sales.applocation.tracking.domain.LocationPoint;
@@ -18,7 +18,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.UUID;
 
 public class TrackingService implements TrackingRepository {
 
@@ -42,101 +42,84 @@ public class TrackingService implements TrackingRepository {
     @Override
     public void save(TrackingPoint trackingPoint) {
         try {
-            // 1. Get the current logged-in Employee's name from Spring Security
-            String employeeName = SecurityContextHolder.getContext()
-                    .getAuthentication().getName();
+            String orderId = trackingPoint.getOrderId().id().toString();
+            String empId = trackingPoint.getEmployeeId().id().toString();
 
-            String id = trackingPoint.getOrderId().id().toString();
-            String jsonHistory = objectMapper.writeValueAsString(trackingPoint.getPoints());
-            LocationPoint latest = trackingPoint.getPoints().get(trackingPoint.getPoints().size() - 1);
+            TrackingPoint existing = findByOrderId(trackingPoint.getOrderId());
+            List<LocationPoint> allPoints = new ArrayList<>();
+            if (existing != null) {
+                allPoints.addAll(existing.getPoints());
+            }
+            allPoints.addAll(trackingPoint.getPoints());
 
-            // 2. Real Tile38 Command with FIELDS
-            // SET [collection] [id] POINT [lat] [lon] FIELD [key] [value] ...
+            String jsonHistory = objectMapper.writeValueAsString(allPoints);
+            LocationPoint latest = allPoints.get(allPoints.size() - 1);
+
             redisCommands.dispatch(CommandType.SET, new StatusOutput<>(codec),
                     new CommandArgs<>(codec)
-                            .add("deliveries")      // Key 1: Collection
-                            .add(id)                // Key 2: ID (OrderId)
+                            .add("deliveries")
+                            .add(orderId)
+                            .add("FIELD").add("employeeId").add(empId)
+                            .add("FIELD").add("history").add(jsonHistory)
+                            .add("EX").add(120)
                             .add("POINT")
                             .add(latest.lat())
-                            .add(latest.lon())
-                            .add("FIELD")
-                            .add("employeeName")    // Metadata 1
-                            .add(employeeName)
-                            .add("FIELD")
-                            .add("history")         // Metadata 2 (Your 6 points)
-                            .add(jsonHistory));
-
+                            .add(latest.lon()));
         } catch (Exception e) {
-            throw new RuntimeException("Tile38 Persistence Error", e);
-        }
-    }
-
-    @Override
-    public TrackingPoint findByOrderId(OrderId oId) {
-        String id = oId.value().toString();
-        String response = redisCommands.dispatch(CommandType.GET,
-                new StatusOutput<>(codec),
-                new CommandArgs<>(codec)
-                        .add("deliveries")
-                        .add(id)
-                        .add("WITHFIELDS"));
-
-        if (response == null || response.contains("nil") || !response.contains("{")) {
-            return null;
-        }
-
-        try {
-            JsonNode root = objectMapper.readTree(response);
-            JsonNode historyNode = root.path("fields").path("history");
-
-            if (historyNode.isMissingNode() || historyNode.asText().isEmpty()) {
-                return null;
-            }
-
-            List<LocationPoint> points = objectMapper.readValue(
-                    historyNode.asText(),
-                    new TypeReference<List<LocationPoint>>() {}
-            );
-
-            return new TrackingPoint(oId, points);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Error parsing Tile38 JSON response", e);
+            throw new RuntimeException("Tile38 Save Error", e);
         }
     }
 
 
     @Override
     public List<AdminMapOfEmployeeDto> findAllActiveLocations() {
-        String response = redisCommands.dispatch(CommandType.SCAN, new StatusOutput<>(codec),
-                new CommandArgs<>(codec).add("deliveries"));
-
-        if (response == null || response.contains("nil") || !response.contains("{")) {
-            return List.of();
-        }
-
         try {
+            String response = redisCommands.dispatch(CommandType.SCAN, new StatusOutput<>(codec),
+                    new CommandArgs<>(codec).add("deliveries"));
+
             JsonNode root = objectMapper.readTree(response);
-            JsonNode objects = root.path("objects");
             List<AdminMapOfEmployeeDto> results = new ArrayList<>();
 
-            for (JsonNode node : objects) {
+            for (JsonNode node : root.path("objects")) {
                 String orderId = node.path("id").asText();
                 JsonNode fields = node.path("fields");
-
-                // Tile38 stores coordinates in GeoJSON format [lon, lat]
-                JsonNode coordinates = node.path("object").path("coordinates");
+                JsonNode coords = node.path("object").path("coordinates");
 
                 results.add(new AdminMapOfEmployeeDto(
                         orderId,
-                        fields.path("employeeName").asText(), // This was saved in the 'save' method
-                        coordinates.get(1).asDouble(), // Latitude
-                        coordinates.get(0).asDouble()  // Longitude
+                        fields.path("employeeId").asText(), // Return ID, UI can resolve name if needed
+                        coords.get(1).asDouble(), // Lat
+                        coords.get(0).asDouble()  // Lon
                 ));
             }
             return results;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse Admin Map data", e);
+            throw new RuntimeException("Failed to scan active locations", e);
+        }
+    }
+
+
+    @Override
+    public TrackingPoint findByOrderId(OrderId id) {
+        try {
+            String response = redisCommands.dispatch(CommandType.GET, new StatusOutput<>(codec),
+                    new CommandArgs<>(codec).add("deliveries").add(id.id().toString()).add("WITHFIELDS"));
+
+            if (response == null || response.contains("nil")) return null;
+
+            JsonNode root = objectMapper.readTree(response);
+            JsonNode fields = root.path("fields");
+
+            String empId = fields.path("employeeId").asText();
+            String historyJson = fields.path("history").asText();
+
+            List<LocationPoint> points = objectMapper.readValue(historyJson,
+                    new TypeReference<>() {
+                    });
+
+            return new TrackingPoint(id, new EmployeeId(UUID.fromString(empId)), points);
+        } catch (Exception e) {
+            return null; // Or log error
         }
     }
 }

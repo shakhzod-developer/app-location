@@ -68,7 +68,6 @@ public class AcceptOrderUseCase {
                 .map(p -> new Coordinate(p.lon(), p.lat()))
                 .toArray(Coordinate[]::new);
         LineString route = geometryFactory.createLineString(coordinates);
-
         LineString cleanRoute = (LineString) RouteSimplifier.simplify(route, 0.00005);
 
         Order order = orderRepository.findById(oId);

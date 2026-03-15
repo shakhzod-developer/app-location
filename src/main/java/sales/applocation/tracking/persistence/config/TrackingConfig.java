@@ -17,11 +17,6 @@ public class TrackingConfig {
         return new TrackingService(redisConnection, objectMapper);
     }
 
-    @Bean
-    public TrackingUseCase trackingUseCase(TrackingRepository trackingRepository) {
-        return new TrackingUseCase(trackingRepository);
-    }
-
     @Bean(destroyMethod = "shutdown")
     public RedisClient tile38Client() {
         return RedisClient.create("redis://localhost:9851"); // Tile38 port

@@ -70,7 +70,6 @@ public class TrackingService implements TrackingRepository {
         }
     }
 
-
     @Override
     public List<AdminMapOfEmployeeDto> findAllActiveLocations() {
         try {
@@ -88,8 +87,8 @@ public class TrackingService implements TrackingRepository {
                 results.add(new AdminMapOfEmployeeDto(
                         orderId,
                         fields.path("employeeId").asText(),
-                        coords.get(1).asDouble(), // Lat
-                        coords.get(0).asDouble()  // Lon
+                        coords.get(1).asDouble(),
+                        coords.get(0).asDouble()
                 ));
             }
             return results;

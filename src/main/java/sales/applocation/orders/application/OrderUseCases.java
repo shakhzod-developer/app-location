@@ -31,7 +31,7 @@ public class OrderUseCases {
 
     public List<Order> getOrdersByEmployeeId(EmployeeId employeeId) {
         return orderRepository.findByEmployeeId(employeeId);
-    }//TODO this one brings the order by employeeId and DATE
+    }
 
 
     public List<Order> getEmployeeDailyHistory(EmployeeId empId, LocalDate date) {

@@ -4,8 +4,6 @@ import sales.applocation.employee.domain.*;
 
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public class EmployeeUseCases {
 

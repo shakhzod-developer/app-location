@@ -30,9 +30,6 @@ public class StaleOrderCleanupService {
 
         for (Order order : activeOrders) {
             if (trackingRepository.findByOrderId(order.getOrderId()) == null) {
-                
-                System.out.println("Order " + order.getOrderId().id() + " is stale. Reverting to ORDERED.");
-
                 order.backUpToOrdered();
                 orderRepository.save(order);
             }

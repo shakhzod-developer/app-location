@@ -2,7 +2,6 @@ package sales.applocation.tracking.domain;
 
 import sales.applocation.employee.domain.EmployeeId;
 import sales.applocation.orders.domain.OrderId;
-import sales.applocation.users.domain.User;
 
 import java.util.List;
 
